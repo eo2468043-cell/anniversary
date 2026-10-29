@@ -1,0 +1,670 @@
+
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>هديتك الخاصة يا ميدو ❤️</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Tahoma, Arial, sans-serif;
+  color: #fff;
+  text-align: center;
+  background: linear-gradient(135deg, #25051c, #711b4d, #180a30);
+  overflow-x: hidden;
+}
+
+.screen {
+  display: none;
+  min-height: 100vh;
+  padding: 30px 16px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+}
+
+.screen.active {
+  display: flex;
+  animation: appear 0.7s ease;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h1 {
+  font-size: clamp(26px, 7vw, 36px);
+  color: #ffbddc;
+  text-shadow: 0 0 18px #ff4da6;
+}
+
+h2 {
+  color: #ffd1e6;
+}
+
+p {
+  line-height: 2;
+  font-size: 18px;
+}
+
+.card {
+  width: 100%;
+  max-width: 540px;
+  padding: 25px 18px;
+  border: 1px solid #ffffff45;
+  border-radius: 25px;
+  background: #ffffff12;
+  box-shadow: 0 0 35px #ff4da625;
+  backdrop-filter: blur(8px);
+}
+
+input {
+  width: 100%;
+  padding: 15px;
+  margin: 15px 0;
+  border-radius: 14px;
+  border: 2px solid #ff9bcb;
+  background: #fff;
+  color: #501335;
+  text-align: center;
+  font-size: 18px;
+}
+
+button {
+  border: none;
+  border-radius: 30px;
+  padding: 14px 22px;
+  margin: 8px;
+  background: linear-gradient(135deg, #ff75b5, #ffb5d5);
+  color: #50102f;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 5px 18px #0003;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+.secondary {
+  background: #ffffffea;
+  color: #761b4c;
+}
+
+.message {
+  font-size: 21px;
+  font-weight: bold;
+  margin: 20px 0;
+  line-height: 2;
+}
+
+.big-emoji {
+  font-size: 75px;
+  animation: heartbeat 1s infinite;
+}
+
+@keyframes heartbeat {
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+.photo {
+  width: 100%;
+  max-width: 370px;
+  max-height: 55vh;
+  object-fit: contain;
+  border: 4px solid #ffc5e1;
+  border-radius: 22px;
+  box-shadow: 0 0 25px #ff66b0;
+  margin: 15px auto;
+}
+
+.caption {
+  font-size: 18px;
+  line-height: 2.1;
+  white-space: pre-line;
+}
+
+.letter-line {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: lineIn 0.65s forwards;
+  margin: 10px 0;
+}
+
+@keyframes lineIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.signature {
+  margin-top: 25px;
+  color: #ffb6da;
+  font-size: 21px;
+  font-weight: bold;
+}
+
+#fireworks {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#error {
+  color: #ffd3e5;
+  min-height: 30px;
+}
+
+#musicStatus {
+  font-size: 15px;
+  color: #ffe0ee;
+}
+
+@media (max-width: 400px) {
+  .card {
+    padding: 22px 14px;
+  }
+
+  .caption {
+    font-size: 17px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<audio id="birthdaySong" preload="auto">
+  <source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<!-- الشاشة الأولى: الباسورد -->
+<section class="screen active" id="passwordScreen">
+  <div class="card">
+    <div class="big-emoji">🎁💗</div>
+    <h1>هديتك الخاصة</h1>
+    <p>مستعد لمفاجأتك يا ميدو يا جان؟ 🥹❤️</p>
+
+    <input
+      id="password"
+      type="password"
+      placeholder="اكتب الباسورد يا حبيبي"
+      autocomplete="off"
+    >
+
+    <button onclick="checkPassword()">
+      افتح هديتك ❤️
+    </button>
+
+    <p id="error"></p>
+  </div>
+</section>
+
+<!-- الشاشة الثانية: الكويز -->
+<section class="screen" id="quizScreen">
+  <div class="card">
+    <h1>سؤال مهم جدًا يا جان 😏❤️</h1>
+    <p>تختار إيه يا ميدو؟ 😂💍</p>
+
+    <button onclick="chooseAsro()">
+      تتجوز أسرو بس ❤️💍
+    </button>
+
+    <br>
+
+    <button class="secondary" onclick="chooseFour()">
+      تتجوز أربعة غيرها 😎😂
+    </button>
+
+    <div id="quizResult" class="message"></div>
+  </div>
+</section>
+
+<!-- الإجابة الصحيحة: قلب أسرو من جوا -->
+<section class="screen" id="kissScreen">
+  <div class="card">
+    <div class="big-emoji">😘</div>
+
+    <h1>😘 قلب أسرو من جوا ❤️</h1>
+
+    <p class="message">
+      إنت اخترت صح يا أحلى جان في الدنيا 🥹💋
+    </p>
+
+    <button onclick="startSurprise()">
+      افتح المفاجأة 🎆❤️
+    </button>
+  </div>
+</section>
+
+<!-- الإجابة الغلط -->
+<section class="screen" id="wrongScreen">
+  <div class="card">
+    <div class="big-emoji">😡</div>
+
+    <h1>طب خليهم ينفعوك بقا 😂</h1>
+
+    <p class="message">مافيش هدية! 😤💔</p>
+
+    <button onclick="tryAgain()">
+      طب جرّب تاني يا جان 😂❤️
+    </button>
+  </div>
+</section>
+
+<!-- الألعاب النارية والأغنية -->
+<section class="screen" id="fireworksScreen">
+  <div class="card">
+    <div class="big-emoji">🎆🎇✨</div>
+
+    <h1>كل سنة وإنت حبيبي يا ميدو ❤️</h1>
+
+    <p class="message">
+      النهارده يوم مميز لأغلى راجل في حياتي 🫂💍
+    </p>
+
+    <p id="musicStatus">
+      🎶 أغنيتنا يا حبيبي ❤️
+    </p>
+
+    <button onclick="openFirstPhoto()">
+      يلا نعيش ذكرياتنا ❤️📸
+    </button>
+  </div>
+</section>
+
+<!-- الصورة الأولى -->
+<section class="screen" id="photo1Screen">
+  <div class="card">
+    <h1>ذكرياتنا الحلوة ❤️</h1>
+
+    <img
+      class="photo"
+      src="photo1.jpg"
+      alt="أول صورة لينا"
+    >
+
+    <p class="caption">
+      النهارده الذكرى السنوية التانية لإخلاص ميدو حبيبي،
+      أقوى وأجمد وأحسن راجل شفته في حياتي.
+      كل سنة وإنت مخلص ومحترم وبتقاوم،
+      كل سنة وإنت أنضف راجل في الدنيا.
+      بحبك ♥️🫂
+    </p>
+
+    <button onclick="showScreen('photo2Screen')">
+      الذكرى اللي بعدها 🥹❤️
+    </button>
+  </div>
+</section>
+
+<!-- الصورة الثانية -->
+<section class="screen" id="photo2Screen">
+  <div class="card">
+    <img
+      class="photo"
+      src="photo2.jpg"
+      alt="أحلى تغفيلات"
+    >
+
+    <p class="caption">
+      أحلى تغفيلات لأحلى جان في الدنيااا 🥹♥️
+    </p>
+
+    <button onclick="showScreen('photo3Screen')">
+      كمّل يا حبيبي ❤️
+    </button>
+  </div>
+</section>
+
+<!-- الصورة الثالثة -->
+<section class="screen" id="photo3Screen">
+  <div class="card">
+    <h1>أحلى هدية لأحلى راجل 🌍♥️</h1>
+
+    <img
+      class="photo"
+      src="photo3.jpg"
+      alt="صورتنا الثالثة"
+    >
+
+    <p class="caption">
+      ودي بقى رسالتي ليك يا حبيبي 🥹💍
+    </p>
+
+    <button onclick="startLetter()">
+      افتح رسالتي ليك 💌
+    </button>
+  </div>
+</section>
+
+<!-- الرسالة الأخيرة -->
+<section class="screen" id="letterScreen">
+  <div class="card">
+    <div class="big-emoji">💌❤️</div>
+
+    <h1>من أسرو لميدو 🫂</h1>
+
+    <div id="letter"></div>
+
+    <button id="letterButton" onclick="showNextLine()">
+      كمّل يا حبيبي ❤️
+    </button>
+  </div>
+</section>
+
+<script>
+/* التنقل بين الشاشات */
+function showScreen(screenId) {
+  document.querySelectorAll(".screen").forEach(function(screen) {
+    screen.classList.remove("active");
+  });
+
+  document.getElementById(screenId).classList.add("active");
+  window.scrollTo(0, 0);
+}
+
+/* التحقق من الباسورد */
+function checkPassword() {
+  const entered = document.getElementById("password").value.trim();
+  const error = document.getElementById("error");
+
+  if (entered === "ميدو الجان") {
+    error.textContent = "";
+    showScreen("quizScreen");
+  } else {
+    error.textContent = "لأ يا جان، جرّب تاني 😂❤️";
+  }
+}
+
+document.getElementById("password").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    checkPassword();
+  }
+});
+
+/* اختيار أسرو */
+function chooseAsro() {
+  showScreen("kissScreen");
+}
+
+/* اختيار أربعة غير أسرو */
+function chooseFour() {
+  showScreen("wrongScreen");
+}
+
+/* إعادة المحاولة */
+function tryAgain() {
+  showScreen("quizScreen");
+}
+
+/* بدء المفاجأة وتشغيل الأغنية */
+function startSurprise() {
+  showScreen("fireworksScreen");
+  startFireworks();
+
+  const song = document.getElementById("birthdaySong");
+  const status = document.getElementById("musicStatus");
+
+  song.play().then(function() {
+    status.textContent = "🎶 الأغنية شغالة مخصوص ليك يا حبيبي ❤️";
+  }).catch(function() {
+    status.textContent =
+      "اضغط تشغيل الأغنية لو ما بدأتش تلقائيًا 🎶❤️";
+
+    song.controls = true;
+  });
+}
+
+/* الانتقال للصورة الأولى */
+function openFirstPhoto() {
+  stopFireworks();
+  showScreen("photo1Screen");
+}
+
+/* الرسالة النهائية: تظهر واحدة واحدة */
+const lines = [
+  "أحلى هدية لأحلى راجل في الدنيا 🌍♥️",
+
+  "كل سنة وإنت مخلص ومحترم وتعرف ربنا وتتقيه فيا وفي نفسك 💪♥️",
+
+  "وكل سنة وأنا محظوظة بيك بوجودك في حياتي 💍🥹",
+
+  "وكل سنة وأنا فخورة بيك، وكل سنة وأنا بتحسد عليك ❤️",
+
+  "ربنا يحميك ويحفظك ليا ويقويك على نفسك وعلى الشيطان دايمًا 🤲🤍",
+
+  "كل سنة وإنت نفسي أخلف ولد زيك، ولو بنت ربنا يرزقها براجل زيك ♥️",
+
+  "كل سنة وأنا بحبك ♥️",
+
+  "توقيع حبيبتك المخلصة دومًا وليس يومًا",
+
+  "أسرو ❤️🫂"
+];
+
+let currentLine = 0;
+
+function startLetter() {
+  currentLine = 0;
+
+  document.getElementById("letter").innerHTML = "";
+
+  document.getElementById("letterButton").textContent =
+    "كمّل يا حبيبي ❤️";
+
+  document.getElementById("letterButton").onclick =
+    showNextLine;
+
+  showScreen("letterScreen");
+
+  showNextLine();
+}
+
+function showNextLine() {
+  if (currentLine >= lines.length) {
+    document.getElementById("letterButton").textContent =
+      "بحبك يا ميدو ❤️";
+
+    document.getElementById("letterButton").onclick = function() {
+      const letter = document.getElementById("letter");
+
+      const finalMessage = document.createElement("p");
+      finalMessage.className = "signature";
+      finalMessage.textContent = "إنت أحلى حاجة في حياتي ❤️🫂";
+
+      letter.appendChild(finalMessage);
+
+      document.getElementById("letterButton").style.display = "none";
+    };
+
+    return;
+  }
+
+  const paragraph = document.createElement("p");
+
+  paragraph.className = "letter-line";
+
+  if (currentLine === lines.length - 1) {
+    paragraph.classList.add("signature");
+  }
+
+  paragraph.textContent = lines[currentLine];
+
+  document.getElementById("letter").appendChild(paragraph);
+
+  currentLine++;
+
+  if (currentLine >= lines.length) {
+    document.getElementById("letterButton").textContent =
+      "النهاية ❤️";
+  }
+}
+
+/* الألعاب النارية بألوان مختلفة */
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+
+let particles = [];
+let fireworksAnimation = null;
+let fireworksRunning = false;
+
+function resizeCanvas() {
+  const ratio = window.devicePixelRatio || 1;
+
+  canvas.width = window.innerWidth * ratio;
+  canvas.height = window.innerHeight * ratio;
+
+  canvas.style.width = window.innerWidth + "px";
+  canvas.style.height = window.innerHeight + "px";
+
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+function createFirework(x, y) {
+  const colors = [
+    "#ff4da6",
+    "#ffd700",
+    "#00e5ff",
+    "#b967ff",
+    "#7cff6b",
+    "#ff7043",
+    "#ffffff"
+  ];
+
+  const color = colors[Math.floor(Math.random() * colors.length)];
+
+  for (let i = 0; i < 65; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1 + Math.random() * 4;
+
+    particles.push({
+      x: x,
+      y: y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      life: 50 + Math.random() * 30,
+      color: color,
+      size: 1 + Math.random() * 2
+    });
+  }
+}
+
+function animateFireworks() {
+  if (!fireworksRunning) return;
+
+  ctx.fillStyle = "rgba(20, 0, 25, 0.18)";
+
+  ctx.fillRect(
+    0,
+    0,
+    window.innerWidth,
+    window.innerHeight
+  );
+
+  if (Math.random() < 0.07) {
+    createFirework(
+      Math.random() * window.innerWidth,
+      Math.random() * window.innerHeight * 0.7
+    );
+  }
+
+  particles = particles.filter(function(particle) {
+    particle.x += particle.vx;
+    particle.y += particle.vy;
+
+    particle.vy += 0.035;
+    particle.vx *= 0.99;
+    particle.vy *= 0.99;
+
+    particle.life--;
+
+    ctx.globalAlpha = Math.max(0, particle.life / 80);
+    ctx.fillStyle = particle.color;
+
+    ctx.beginPath();
+
+    ctx.arc(
+      particle.x,
+      particle.y,
+      particle.size,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fill();
+
+    return particle.life > 0;
+  });
+
+  ctx.globalAlpha = 1;
+
+  fireworksAnimation = requestAnimationFrame(animateFireworks);
+}
+
+function startFireworks() {
+  stopFireworks();
+
+  particles = [];
+  fireworksRunning = true;
+
+  ctx.clearRect(
+    0,
+    0,
+    window.innerWidth,
+    window.innerHeight
+  );
+
+  animateFireworks();
+}
+
+function stopFireworks() {
+  fireworksRunning = false;
+
+  if (fireworksAnimation !== null) {
+    cancelAnimationFrame(fireworksAnimation);
+    fireworksAnimation = null;
+  }
+
+  particles = [];
+
+  ctx.clearRect(
+    0,
+    0,
+    window.innerWidth,
+    window.innerHeight
+  );
+}
+</script>
+
+</body>
+</html>
